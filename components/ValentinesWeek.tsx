@@ -194,11 +194,12 @@ export const ValentinesWeek: React.FC<ValentinesWeekProps> = ({ onNext }) => {
                             className="w-full h-full object-cover pointer-events-none" 
                         />
                     </div>
-                    
-                    {/* Text Area */}
-                    <div className="flex-grow flex flex-col items-center justify-center p-4 sm:p-6 text-center bg-white">
-                        <h3 className="font-script text-2xl sm:text-3xl text-valentine-600 mb-2">{item.day}</h3>
-                        <p className="font-sans text-xs sm:text-sm text-gray-600 leading-relaxed">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
+                  <Button onClick={handleReset} variant="secondary" className="w-full min-w-[96px] px-2 sm:px-4 py-2 text-xs sm:text-sm flex items-center justify-center gap-2 whitespace-nowrap">
+                    <RotateCcw size={16} />
+                    <span className="text-valentine-600">Replay</span>
+                  </Button>
+                </motion.div>
                             "{item.quote}"
                         </p>
                     </div>

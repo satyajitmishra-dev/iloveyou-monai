@@ -154,8 +154,9 @@ export const Memories: React.FC<MemoriesProps> = ({ onNext }) => {
          
          <div className="flex gap-3 sm:gap-4 w-full">
              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
-               <Button onClick={handleReset} variant="secondary" className="w-full px-2 sm:px-4 py-2 text-xs sm:text-sm">
-                   <RotateCcw size={16} className="mx-auto" />
+               <Button onClick={handleReset} variant="secondary" className="w-full min-w-[96px] px-2 sm:px-4 py-2 text-xs sm:text-sm flex items-center justify-center gap-2 whitespace-nowrap">
+                   <RotateCcw size={16} />
+                   <span className="text-valentine-600">Replay</span>
                </Button>
              </motion.div>
              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
