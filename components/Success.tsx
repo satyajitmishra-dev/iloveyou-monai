@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { HeartHandshake } from 'lucide-react';
 
@@ -29,24 +30,65 @@ export const Success: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6 animate-fade-in">
-      <HeartHandshake className="w-32 h-32 text-valentine-600 animate-bounce" />
-      
-      <h1 className="text-5xl md:text-7xl font-script text-valentine-600">
-        Yay! I knew it!
-      </h1>
-      
-      <p className="text-xl md:text-2xl text-gray-700 font-sans max-w-lg">
-        Best Valentine's Day Ever. <br/>
-        I love you so much! ❤️
-      </p>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  };
 
-      <div className="mt-12 p-6 bg-white rounded-xl shadow-inner max-w-md">
-        <p className="text-gray-500 text-sm">
+  const itemVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.6, ease: 'backOut' },
+    },
+  };
+
+  return (
+    <motion.div
+      className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4 sm:space-y-6 px-4"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div variants={itemVariants}>
+        <motion.div
+          animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.05, 1.05, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <HeartHandshake className="w-24 sm:w-32 h-24 sm:h-32 text-valentine-600" />
+        </motion.div>
+      </motion.div>
+      
+      <motion.h1
+        className="text-4xl sm:text-5xl md:text-7xl font-script text-valentine-600"
+        variants={itemVariants}
+      >
+        Yay! I knew it!
+      </motion.h1>
+      
+      <motion.p
+        className="text-lg sm:text-xl md:text-2xl text-gray-700 font-sans max-w-lg"
+        variants={itemVariants}
+      >
+        Best Valentine's Day Ever. <br className="hidden sm:block" />
+        I love you so much! ❤️
+      </motion.p>
+
+      <motion.div
+        className="mt-8 sm:mt-12 p-4 sm:p-6 bg-white rounded-xl shadow-inner max-w-md w-full"
+        variants={itemVariants}
+      >
+        <p className="text-gray-500 text-xs sm:text-sm">
           Dinner date details coming to your DMs soon... 😉
         </p>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

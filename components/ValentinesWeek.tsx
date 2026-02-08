@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { ChevronRight, RotateCcw, Hand } from 'lucide-react';
 import { Button } from './Button';
 
@@ -118,13 +119,31 @@ export const ValentinesWeek: React.FC<ValentinesWeekProps> = ({ onNext }) => {
   const isLastSlide = currentIndex === WEEK_DATA.length - 1;
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-lg mx-auto min-h-[70vh] px-4">
-      <h2 className="text-3xl font-script text-valentine-600 mb-2 animate-fade-in">The Week of Love</h2>
-      <p className="text-gray-500 mb-8 text-sm">Counting down the days to you...</p>
+    <motion.div
+      className="flex flex-col items-center justify-center w-full max-w-lg mx-auto min-h-[70vh] px-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.h2
+        className="text-3xl sm:text-4xl font-script text-valentine-600 mb-1 sm:mb-2"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        The Week of Love
+      </motion.h2>
+      <motion.p
+        className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+      >
+        Counting down the days to you...
+      </motion.p>
       
       {/* Card Stack Container */}
       <div 
-        className="relative w-full max-w-[320px] aspect-[3/4.5] mb-8 perspective-1000"
+        className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-[3/4.5] mb-6 sm:mb-8 perspective-1000"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -140,24 +159,32 @@ export const ValentinesWeek: React.FC<ValentinesWeekProps> = ({ onNext }) => {
            const rotation = isFront ? 0 : (item.offset % 2 === 0 ? 3 : -3);
 
            return (
-             <div
+             <motion.div
                key={item.key}
                onClick={isFront ? handleNextCard : undefined}
-               className={`absolute top-0 left-0 w-full h-full transition-all duration-500 ease-in-out origin-bottom
-                 ${isFront ? 'cursor-pointer hover:-translate-y-2' : ''}`}
-               style={{
+               className={`absolute top-0 left-0 w-full h-full origin-bottom
+                 ${isFront ? 'cursor-pointer' : ''}`}
+               animate={{
+                 y: translateY,
+                 scale,
+                 rotate: rotation,
+                 opacity,
                  zIndex,
-                 transform: `translateY(${translateY}px) scale(${scale}) rotate(${rotation}deg)`,
-                 opacity
                }}
+               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+               whileHover={isFront ? { y: translateY - 8 } : {}}
              >
                 {/* Card Content */}
                 <div className="w-full h-full bg-white rounded-2xl shadow-xl border-4 border-valentine-100 overflow-hidden flex flex-col relative">
                     
                     {/* Day Badge */}
-                    <div className="absolute top-4 right-4 bg-valentine-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-md">
+                    <motion.div
+                      className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-valentine-500 text-white px-2 sm:px-3 py-1 rounded-full text-xs font-bold z-10 shadow-md"
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
                       {item.date}
-                    </div>
+                    </motion.div>
 
                     {/* Image Area */}
                     <div className="h-[60%] w-full bg-valentine-50 overflow-hidden">
@@ -169,42 +196,59 @@ export const ValentinesWeek: React.FC<ValentinesWeekProps> = ({ onNext }) => {
                     </div>
                     
                     {/* Text Area */}
-                    <div className="flex-grow flex flex-col items-center justify-center p-6 text-center bg-white">
-                        <h3 className="font-script text-3xl text-valentine-600 mb-2">{item.day}</h3>
-                        <p className="font-sans text-gray-600 text-sm leading-relaxed">
+                    <div className="flex-grow flex flex-col items-center justify-center p-4 sm:p-6 text-center bg-white">
+                        <h3 className="font-script text-2xl sm:text-3xl text-valentine-600 mb-2">{item.day}</h3>
+                        <p className="font-sans text-xs sm:text-sm text-gray-600 leading-relaxed">
                             "{item.quote}"
                         </p>
                     </div>
 
                     {/* Cat Decoration (simulated) */}
-                    <div className="absolute bottom-2 right-2 text-2xl opacity-50">
+                    <motion.div
+                      className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 text-xl sm:text-2xl opacity-50"
+                      animate={{ rotate: [0, 5, -5, 0] }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    >
                        🐾
-                    </div>
+                    </motion.div>
                 </div>
-             </div>
+             </motion.div>
            );
         })}
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col items-center space-y-5 z-10 w-full">
+      <motion.div
+        className="flex flex-col items-center space-y-4 sm:space-y-5 z-10 w-full"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
          {!isLastSlide ? (
-            <div className="flex items-center text-valentine-400 text-sm font-medium animate-pulse gap-2">
+            <motion.div
+              className="flex items-center text-valentine-400 text-xs sm:text-sm font-medium gap-2"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
                 <Hand size={16} /> Swipe or Tap to see next
-            </div>
+            </motion.div>
          ) : (
             <div className="h-5"></div>
          )}
          
-         <div className="flex gap-4">
-             <Button onClick={handleReset} variant="secondary" className="px-4 py-2 text-sm">
-                 <RotateCcw size={18} />
-             </Button>
-             <Button onClick={onNext} className="px-8 shadow-valentine-400/40">
-                Continue Journey <ChevronRight className="inline ml-1 w-4 h-4" />
-             </Button>
+         <div className="flex gap-3 sm:gap-4 w-full">
+             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
+               <Button onClick={handleReset} variant="secondary" className="w-full px-2 sm:px-4 py-2 text-xs sm:text-sm">
+                   <RotateCcw size={16} />
+               </Button>
+             </motion.div>
+             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
+               <Button onClick={onNext} className="w-full px-2 sm:px-8 py-2 sm:py-3 text-xs sm:text-base shadow-valentine-400/40">
+                  Continue <ChevronRight className="inline ml-1 w-3 sm:w-4 h-3 sm:h-4" />
+               </Button>
+             </motion.div>
          </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

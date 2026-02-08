@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { ChevronRight, RotateCcw, Hand } from 'lucide-react';
 import { Button } from './Button';
 import { Memory } from '../types';
@@ -69,12 +70,23 @@ export const Memories: React.FC<MemoriesProps> = ({ onNext }) => {
   }).reverse();
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-lg mx-auto min-h-[60vh] px-4">
-      <h2 className="text-3xl font-script text-valentine-600 mb-8 animate-fade-in">Our Memories</h2>
+    <motion.div
+      className="flex flex-col items-center justify-center w-full max-w-lg mx-auto min-h-[60vh] px-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.h2
+        className="text-3xl sm:text-4xl font-script text-valentine-600 mb-6 sm:mb-8"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        Our Memories
+      </motion.h2>
       
       {/* Card Stack Container */}
       <div 
-        className="relative w-full max-w-[320px] aspect-[3/4] mb-12 perspective-1000"
+        className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-[3/4] mb-8 sm:mb-12 perspective-1000"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -89,19 +101,23 @@ export const Memories: React.FC<MemoriesProps> = ({ onNext }) => {
            const rotation = isFront ? 0 : (item.offset % 2 === 0 ? 2 : -2); 
 
            return (
-             <div
+             <motion.div
                key={item.key}
                onClick={isFront ? handleNextCard : undefined}
-               className={`absolute top-0 left-0 w-full h-full transition-all duration-500 ease-in-out origin-bottom
-                 ${isFront ? 'cursor-pointer hover:-translate-y-2 hover:rotate-1' : ''}`}
-               style={{
+               className={`absolute top-0 left-0 w-full h-full origin-bottom
+                 ${isFront ? 'cursor-pointer' : ''}`}
+               animate={{
+                 y: translateY,
+                 scale,
+                 rotate: rotation,
+                 opacity,
                  zIndex,
-                 transform: `translateY(${translateY}px) scale(${scale}) rotate(${rotation}deg)`,
-                 opacity
                }}
+               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+               whileHover={isFront ? { y: translateY - 8 } : {}}
              >
                 {/* Polaroid Frame */}
-                <div className="w-full h-full bg-white p-4 pb-20 shadow-xl rounded-sm border border-gray-200 flex flex-col">
+                <div className="w-full h-full bg-white p-3 sm:p-4 pb-16 sm:pb-20 shadow-xl rounded-sm border border-gray-200 flex flex-col">
                     <div className="flex-grow w-full relative overflow-hidden bg-gray-50 border border-gray-100">
                         <img 
                             src={item.imageUrl} 
@@ -110,32 +126,45 @@ export const Memories: React.FC<MemoriesProps> = ({ onNext }) => {
                         />
                     </div>
                     {/* Caption Area */}
-                    <div className="absolute bottom-0 left-0 w-full h-20 flex items-center justify-center px-4">
-                        <p className="font-script text-2xl text-gray-700 text-center leading-tight">
+                    <div className="absolute bottom-0 left-0 w-full h-16 sm:h-20 flex items-center justify-center px-2 sm:px-4">
+                        <p className="font-script text-lg sm:text-2xl text-gray-700 text-center leading-tight">
                             {item.caption}
                         </p>
                     </div>
                 </div>
-             </div>
+             </motion.div>
            );
         })}
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col items-center space-y-5 z-10 w-full">
-         <p className="text-valentine-400 text-sm font-medium animate-pulse flex items-center gap-2">
+      <motion.div
+        className="flex flex-col items-center space-y-4 sm:space-y-5 z-10 w-full"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+         <motion.p
+           className="text-valentine-400 text-xs sm:text-sm font-medium flex items-center gap-2"
+           animate={{ opacity: [0.5, 1, 0.5] }}
+           transition={{ duration: 1.5, repeat: Infinity }}
+         >
             <Hand size={16} /> Tap or Swipe to see next
-         </p>
+         </motion.p>
          
-         <div className="flex gap-4">
-             <Button onClick={handleReset} variant="secondary" className="px-4 py-2 text-sm">
-                 <RotateCcw size={18} className="mr-2 inline" /> Replay
-             </Button>
-             <Button onClick={onNext} className="px-8 shadow-valentine-400/40">
-                Continue <ChevronRight className="inline ml-1 w-4 h-4" />
-             </Button>
+         <div className="flex gap-3 sm:gap-4 w-full">
+             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
+               <Button onClick={handleReset} variant="secondary" className="w-full px-2 sm:px-4 py-2 text-xs sm:text-sm">
+                   <RotateCcw size={16} className="mx-auto" />
+               </Button>
+             </motion.div>
+             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
+               <Button onClick={onNext} className="w-full px-2 sm:px-4 py-2 text-xs sm:text-base">
+                   Continue <ChevronRight className="inline ml-1 w-3 sm:w-4 h-3 sm:h-4" />
+               </Button>
+             </motion.div>
          </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AppStep } from './types';
 import { Welcome } from './components/Welcome';
 import { ValentinesWeek } from './components/ValentinesWeek';
@@ -7,7 +8,9 @@ import { Reasons } from './components/Reasons';
 import { AIPoem } from './components/AIPoem';
 import { TheQuestion } from './components/TheQuestion';
 import { Success } from './components/Success';
+import { Progress } from './components/Progress';
 import { Music, Volume2, VolumeX } from 'lucide-react';
+import { useSoundEffects } from './hooks/useSoundEffects';
 
 // Romantic background music - Chopin's Nocturne Op. 9 No. 2
 const MUSIC_URL = "/bg.mp3";
@@ -16,6 +19,7 @@ const App: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<AppStep>(AppStep.WELCOME);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { playClick, playSuccess, playWhoosh } = useSoundEffects();
 
   useEffect(() => {
     audioRef.current = new Audio(MUSIC_URL);
@@ -50,6 +54,7 @@ const App: React.FC = () => {
   };
 
   const handleStart = () => {
+    playWhoosh();
     // Attempt to play music on first interaction (browser policy)
     if (audioRef.current && !isPlaying) {
       audioRef.current.play().then(() => {
@@ -66,15 +71,15 @@ const App: React.FC = () => {
       case AppStep.WELCOME:
         return <Welcome onNext={handleStart} />;
       case AppStep.VALENTINES_WEEK:
-        return <ValentinesWeek onNext={() => setCurrentStep(AppStep.MEMORIES)} />;
+        return <ValentinesWeek onNext={() => { playClick(); setCurrentStep(AppStep.MEMORIES); }} />;
       case AppStep.MEMORIES:
-        return <Memories onNext={() => setCurrentStep(AppStep.REASONS)} />;
+        return <Memories onNext={() => { playClick(); setCurrentStep(AppStep.REASONS); }} />;
       case AppStep.REASONS:
-        return <Reasons onNext={() => setCurrentStep(AppStep.AI_POEM)} />;
+        return <Reasons onNext={() => { playClick(); setCurrentStep(AppStep.AI_POEM); }} />;
       case AppStep.AI_POEM:
-        return <AIPoem onNext={() => setCurrentStep(AppStep.THE_QUESTION)} />;
+        return <AIPoem onNext={() => { playClick(); setCurrentStep(AppStep.THE_QUESTION); }} />;
       case AppStep.THE_QUESTION:
-        return <TheQuestion onYes={() => setCurrentStep(AppStep.SUCCESS)} />;
+        return <TheQuestion onYes={() => { playSuccess(); setCurrentStep(AppStep.SUCCESS); }} />;
       case AppStep.SUCCESS:
         return <Success />;
       default:
@@ -83,7 +88,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-valentine-50 via-pink-100 to-valentine-200 flex flex-col items-center relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-valentine-50 via-pink-100 to-valentine-200 flex flex-col relative overflow-hidden font-sans">
       
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -92,32 +97,30 @@ const App: React.FC = () => {
         <div className="absolute bottom-10 left-1/2 w-64 h-64 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style={{ animationDelay: '2s' }} />
       </div>
 
-      {/* Main Container */}
-      <main className="z-10 w-full max-w-4xl px-4 py-8 md:py-16 min-h-screen flex flex-col">
-        {/* Progress Dots (Hidden on Welcome/Success) */}
-        {currentStep !== AppStep.WELCOME && currentStep !== AppStep.SUCCESS && (
-          <div className="flex justify-center gap-2 mb-8 flex-wrap">
-            {Object.values(AppStep).filter(s => s !== AppStep.WELCOME && s !== AppStep.SUCCESS).map((step, idx) => (
-              <div 
-                key={step}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  Object.values(AppStep).indexOf(currentStep) >= Object.values(AppStep).indexOf(step)
-                    ? 'w-6 md:w-8 bg-valentine-600'
-                    : 'w-2 bg-valentine-200'
-                }`}
-              />
-            ))}
-          </div>
-        )}
+      {/* Progress Component */}
+      {currentStep !== AppStep.WELCOME && currentStep !== AppStep.SUCCESS && (
+        <Progress currentStep={currentStep} />
+      )}
 
-        {/* Content Area */}
-        <div className="flex-grow flex items-center justify-center">
-          {renderStep()}
-        </div>
+      {/* Main Container */}
+      <main className="z-10 w-full max-w-4xl mx-auto px-4 py-8 md:py-16 flex-grow flex flex-col">
+        {/* Content Area with Animations */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+            className="flex-grow flex items-center justify-center w-full"
+          >
+            {renderStep()}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Floating Music Control */}
-      <button 
+      <motion.button
         onClick={toggleMusic}
         className={`fixed bottom-12 right-4 md:bottom-8 md:right-8 z-50 p-3 rounded-full shadow-lg transition-all duration-300 ${
           isPlaying 
@@ -125,11 +128,13 @@ const App: React.FC = () => {
             : 'bg-white text-gray-400 hover:text-valentine-500'
         }`}
         title={isPlaying ? "Pause Music" : "Play Romantic Music"}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
       >
         {isPlaying ? <Volume2 size={24} /> : <VolumeX size={24} />}
-      </button>
+      </motion.button>
 
-      <footer className="fixed bottom-2 w-full text-center text-valentine-800/60 text-xs font-sans pointer-events-none pb-2">
+      <footer className="fixed bottom-2 w-full text-center text-valentine-800/60 text-xs font-sans pointer-events-none pb-2 z-40">
         Made with ❤️ by your dear husbie
       </footer>
     </div>
