@@ -194,15 +194,21 @@ export const ValentinesWeek: React.FC<ValentinesWeekProps> = ({ onNext }) => {
                             className="w-full h-full object-cover pointer-events-none" 
                         />
                     </div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
-                  <Button onClick={handleReset} variant="secondary" className="w-full min-w-[96px] px-2 sm:px-4 py-2 text-xs sm:text-sm flex items-center justify-center gap-2 whitespace-nowrap">
-                    <RotateCcw size={16} />
-                    <span className="text-valentine-600">Replay</span>
-                  </Button>
-                </motion.div>
+
+                    {/* Quote Section */}
+                    <div className="flex-1 bg-white flex flex-col items-center justify-center px-3 sm:px-4 py-3 sm:py-4">
+                        <p className="text-xs sm:text-sm text-center text-valentine-700 italic font-poppins">
                             "{item.quote}"
                         </p>
                     </div>
+
+                    {/* Replay Button */}
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full px-3 sm:px-4 pb-3 sm:pb-4">
+                        <Button onClick={handleReset} variant="secondary" className="w-full min-w-[96px] px-2 sm:px-4 py-2 text-xs sm:text-sm flex items-center justify-center gap-2 whitespace-nowrap">
+                            <RotateCcw size={16} />
+                            <span className="text-valentine-600">Replay</span>
+                        </Button>
+                    </motion.div>
 
                     {/* Cat Decoration (simulated) */}
                     <motion.div
